@@ -20,9 +20,11 @@ import java.util.concurrent.Callable;
 @Slf4j(topic = "x.HttpGetTask")
 public class HttpGetTask implements Callable<RequestResult> {
 
+    private int taskId;
     private String URL;
 
-    public HttpGetTask(String URL) {
+    public HttpGetTask(int taskId, String URL) {
+        this.taskId = taskId;
         this.URL = URL;
     }
 
@@ -53,7 +55,6 @@ public class HttpGetTask implements Callable<RequestResult> {
             };
             startTime = System.currentTimeMillis();
             success = httpclient.execute(httpget, responseHandler);
-            // 结束时间
             endTime = System.currentTimeMillis();
 
 
@@ -64,7 +65,7 @@ public class HttpGetTask implements Callable<RequestResult> {
             httpclient.close();
         }
 
-        requestResult = new RequestResult(success, endTime - startTime);
+        requestResult = new RequestResult(this.taskId, success, endTime - startTime);
         return requestResult;
     }
 }

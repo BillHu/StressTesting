@@ -28,10 +28,11 @@ public class RequestsRunner {
         results = new ArrayList<>();
 
         // 初始化线程池
-        ExecutorService pool = Executors.newFixedThreadPool(concurrentRequests);
+//        ExecutorService pool = Executors.newFixedThreadPool(concurrentRequests);
+        ExecutorService pool = new ThreadPoolExecutor(concurrentRequests, concurrentRequests, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
         for (int i = 0; i < totalRequests; i++) {
-            HttpGetTask task = new HttpGetTask(URL);
+            HttpGetTask task = new HttpGetTask(i + 1, URL);
             Future<RequestResult> futureResult = pool.submit(task);
             futureResults.add(futureResult);
         }
@@ -51,10 +52,10 @@ public class RequestsRunner {
 
         // 排序
         List<RequestResult> sortedResults = results.stream().sorted().collect(Collectors.toList());
-        /*for (RequestResult r : sortedResults) {
-            log.debug("{}",r.getDuration());
-        }*/
-        int index95 = (int) Math.floor(sortedResults.size() * 0.95f);
+        for (RequestResult r : sortedResults) {
+            log.debug("{} : {} ms", r.getTaskId(), r.getDuration());
+        }
+        int index95 = (int) Math.ceil(sortedResults.size() * 0.95f)-1;
 
 
         long min = results.stream().mapToLong(RequestResult::getDuration).min().getAsLong();

@@ -8,17 +8,28 @@ package com.taerhong.http.stresstesting;
 public class RequestResult implements Comparable<RequestResult> {
 
     /**
+     * id
+     */
+    private int taskId;
+
+    /**
      * 是否执行成功
      */
     private boolean success;
+
     /**
      * 执行时长,毫秒
      */
     private long duration;
 
-    public RequestResult(boolean success, long duration) {
+    public RequestResult(int taskId, boolean success, long duration) {
+        this.taskId = taskId;
         this.success = success;
         this.duration = duration;
+    }
+
+    public int getTaskId() {
+        return taskId;
     }
 
     public boolean isSuccess() {
